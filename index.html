@@ -64,7 +64,7 @@
 
     // Fungsi untuk memuat data dari tabel 'web'
     async function loadData() {
-      const { data, error } = await supabase.from('web').select('*').order('id')
+      const { data, error } = await supabase.from('buku').select('*').order('id')
       if (error) {
         alert('Error loading data: ' + error.message)
         return
@@ -78,7 +78,7 @@
         out += `
           <div class="content-card">
             <h2>${row.judul}</h2>
-            <p>${row.isi}</p>
+            <p>${row.pengarang}</p>
           </div>
         `
       })
