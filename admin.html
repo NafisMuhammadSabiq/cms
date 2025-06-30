@@ -31,6 +31,7 @@
       <th>Pengarang</th>
       <th>Penerbit</th>
       <th>Tanggal Terbit</th>
+      <th>Genre</th>
     </tr>
   </thead>
   <tbody id="dataBody"></tbody>
@@ -53,6 +54,10 @@
   <div style="margin-top:8px;">
     <label for="tanggalInput">Tanggal Terbit:</label><br/>
     <input type="date" id="tanggalInput" required />
+  </div>
+  <div style="margin-top:8px;">
+    <label for="genreInput">Genre:</label><br/>
+    <input type="text" id="genreInput" required />
   </div>
   <div style="margin-top:15px;">
     <button type="submit">Simpan</button>
@@ -77,6 +82,7 @@ const judulInput = document.getElementById('judulInput')
 const pengarangInput = document.getElementById('pengarangInput')
 const penerbitInput = document.getElementById('penerbitInput')
 const tanggalInput = document.getElementById('tanggalInput')
+const genreInput = document.getElementById('genreInput')
 const deleteBtn = document.getElementById('deleteBtn')
 const cancelBtn = document.getElementById('cancelBtn')
 
@@ -94,6 +100,7 @@ async function loadData() {
       <td>${row.pengarang}</td>
       <td>${row.penerbit}</td>
       <td>${row.tanggal_terbit}</td>
+      <td>${row.genre || '-'}</td>
     `
     tr.addEventListener('click', () => showForm(row))
     dataBody.appendChild(tr)
@@ -107,6 +114,7 @@ function showForm(data = null) {
     pengarangInput.value = data.pengarang
     penerbitInput.value = data.penerbit
     tanggalInput.value = data.tanggal_terbit
+    genreInput.value = data.genre || ''
     deleteBtn.style.display = 'inline-block'
   } else {
     recordIdInput.value = ''
@@ -130,21 +138,22 @@ async function saveData(e) {
   const pengarang = pengarangInput.value.trim()
   const penerbit = penerbitInput.value.trim()
   const tanggal_terbit = tanggalInput.value
+  const genre = genreInput.value.trim()
 
-  if (!judul || !pengarang || !penerbit || !tanggal_terbit) {
+  if (!judul || !pengarang || !penerbit || !tanggal_terbit || !genre) {
     return alert('Semua kolom harus diisi!')
   }
 
   if (id) {
     const { error } = await supabase
       .from('buku')
-      .update({ judul, pengarang, penerbit, tanggal_terbit })
+      .update({ judul, pengarang, penerbit, tanggal_terbit, genre})
       .eq('id', id)
     if (error) return alert('Error update: ' + error.message)
   } else {
     const { error } = await supabase
       .from('buku')
-      .insert([{ judul, pengarang, penerbit, tanggal_terbit }])
+      .insert([{ judul, pengarang, penerbit, tanggal_terbit, genre }])
     if (error) return alert('Error insert: ' + error.message)
   }
 
