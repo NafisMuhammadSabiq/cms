@@ -175,7 +175,7 @@
       data.forEach(row => {
         const tr = document.createElement('tr')
         tr.dataset.id = row.id
-        tr.innerHTML = 
+        tr.innerHTML = `
           <td>${row.id}</td>
           <td>${row.judul}</td>
           <td>${row.pengarang}</td>
@@ -183,7 +183,7 @@
           <td>${row.tanggal_terbit}</td>
           <td>${row.genre || '-'}</td>
           <td><img src="${row.cover_url || 'placeholder.jpg'}" class="cover-preview"></td>
-        
+        `
         tr.addEventListener('click', () => showForm(row))
         dataBody.appendChild(tr)
       })
@@ -229,17 +229,22 @@
       }
 
       if (coverFile) {
-        const fileName = ${Date.now()}-${coverFile.name}
+        const fileName = `${Date.now()}-${coverFile.name}`
+
+        if (!coverFile.type.startsWith('image/')) {
+          return alert('File harus berupa gambar!')
+        }
+
         const { error: uploadError } = await supabase.storage
           .from('cover-buku')
-          .upload(cover/${fileName}, coverFile, {
+          .upload(`cover/${fileName}`, coverFile, {
             cacheControl: '3600',
             upsert: false
           })
 
         if (uploadError) return alert('Gagal upload cover: ' + uploadError.message)
 
-        cover_url = https://whhnuismtwqbmplvwzwf.supabase.co/storage/v1/object/public/cover-buku/cover/${fileName}
+        cover_url = `https://whhnuismtwqbmplvwzwf.supabase.co/storage/v1/object/public/cover-buku/cover/${fileName}`
       }
 
       const dataToSave = { judul, pengarang, penerbit, tanggal_terbit, genre }
@@ -273,6 +278,7 @@
     deleteBtn.addEventListener('click', deleteData)
     cancelBtn.addEventListener('click', hideForm)
     window.addEventListener('DOMContentLoaded', loadData)
+
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut()
       localStorage.removeItem('sessionUser')
