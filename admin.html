@@ -1,317 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Daftar Buku Perpustakaan</title>
-<style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daftar Buku Perpustakaan</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
 
-  h2 {
-    color: #00467f;
-  }
+    h2 {
+      color: #00467f;
+    }
 
-  button {
-    background-color: #00467f;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-  }
+    button {
+      background-color: #00467f;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
 
-  button:hover {
-    background-color: #003054;
-  }
+    button:hover {
+      background-color: #003054;
+    }
 
-  #logoutBtn {
-    float: right;
-    background-color: crimson;
-  }
+    #logoutBtn {
+      float: right;
+      background-color: crimson;
+    }
 
-  #addBtn {
-    margin-right: 10px;
-    margin-bottom: 20px;
-  }
+    #addBtn {
+      margin-right: 10px;
+      margin-bottom: 20px;
+    }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background-color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    border-radius: 8px;
-    overflow: hidden;
-  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-  th, td {
-    padding: 12px 10px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-  }
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
 
-  th {
-    background-color: #00467f;
-    color: white;
-  }
+    th {
+      background-color: #00467f;
+      color: white;
+    }
 
-  tr:hover {
-    background-color: #f1f1f1;
-    cursor: pointer;
-  }
+    tr:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
 
-  #crudForm {
-    display: none;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    margin-top: 20px;
-    width: 100%;
-    max-width: 500px;
-  }
+    #crudForm {
+      display: none;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
 
-  #crudForm input[type="text"],
-  #crudForm input[type="date"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    margin-bottom: 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-  }
+    #crudForm input[type="text"],
+    #crudForm input[type="date"],
+    #crudForm input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
 
-  #crudForm button {
-    margin-top: 10px;
-    margin-right: 10px;
-  }
-</style>
+    #crudForm button {
+      margin-top: 10px;
+      margin-right: 10px;
+    }
 
+    img.cover-preview {
+      height: 50px;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>CRUD Buku Perpustakaan (Supabase)</h2>
-<button id="logoutBtn" style="float: right; background-color: crimson; color: white; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer;">
-  Logout
-</button>
+  <h2>CRUD Buku Perpustakaan (Supabase)</h2>
+  <button id="logoutBtn">Logout</button>
+  <button id="addBtn">Tambah Buku</button>
+  <button onclick="window.location.href='index.html'">Home</button>
 
-<button id="addBtn">Tambah Buku</button>
-<button onclick="window.location.href='index.html'">Home</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Judul</th>
+        <th>Pengarang</th>
+        <th>Penerbit</th>
+        <th>Tanggal Terbit</th>
+        <th>Genre</th>
+        <th>Cover</th>
+      </tr>
+    </thead>
+    <tbody id="dataBody"></tbody>
+  </table>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Judul</th>
-      <th>Pengarang</th>
-      <th>Penerbit</th>
-      <th>Tanggal Terbit</th>
-      <th>Genre</th>
-      <th>Cover</th>
-    </tr>
-  </thead>
-  <tbody id="dataBody"></tbody>
-</table>
-
-<form id="crudForm">
-  <input type="hidden" id="recordId" />
-  <div>
-    <label for="judulInput">Judul:</label><br/>
+  <form id="crudForm">
+    <input type="hidden" id="recordId" />
+    <label>Judul:</label>
     <input type="text" id="judulInput" required />
-  </div>
-  <div style="margin-top:8px;">
-    <label for="pengarangInput">Pengarang:</label><br/>
+
+    <label>Pengarang:</label>
     <input type="text" id="pengarangInput" required />
-  </div>
-  <div style="margin-top:8px;">
-    <label for="penerbitInput">Penerbit:</label><br/>
+
+    <label>Penerbit:</label>
     <input type="text" id="penerbitInput" required />
-  </div>
-  <div style="margin-top:8px;">
-    <label for="tanggalInput">Tanggal Terbit:</label><br/>
+
+    <label>Tanggal Terbit:</label>
     <input type="date" id="tanggalInput" required />
-  </div>
-  <div style="margin-top:8px;">
-    <label for="genreInput">Genre:</label><br/>
+
+    <label>Genre:</label>
     <input type="text" id="genreInput" required />
-  </div>
-  <div style="margin-top:15px;">
+
+    <label>Cover Buku:</label>
+    <input type="file" id="coverInput" accept="image/*" />
+
     <button type="submit">Simpan</button>
     <button type="button" id="deleteBtn">Hapus</button>
     <button type="button" id="cancelBtn">Batal</button>
-  </div>
-  <div style="margin-top:8px;">
-    <label for="coverInput">Cover Buku:</label><br/>
-    <input type="file" id="coverInput" accept="image/*" />
-  </div>
+  </form>
 
-</form>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    const SUPABASE_URL = 'https://whhnuismtwqbmplvwzwf.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndoaG51aXNtdHdxYm1wbHZ3endmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzc1ODQsImV4cCI6MjA2NTcxMzU4NH0.9aAnrF1Vicqui3zWSXcAck_prcganeCIJEtN-RKyDVc'
 
-const SUPABASE_URL = 'https://whhnuismtwqbmplvwzwf.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndoaG51aXNtdHdxYm1wbHZ3endmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzc1ODQsImV4cCI6MjA2NTcxMzU4NH0.9aAnrF1Vicqui3zWSXcAck_prcganeCIJEtN-RKyDVc'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    const addBtn = document.getElementById('addBtn')
+    const dataBody = document.getElementById('dataBody')
+    const crudForm = document.getElementById('crudForm')
+    const recordIdInput = document.getElementById('recordId')
+    const judulInput = document.getElementById('judulInput')
+    const pengarangInput = document.getElementById('pengarangInput')
+    const penerbitInput = document.getElementById('penerbitInput')
+    const tanggalInput = document.getElementById('tanggalInput')
+    const genreInput = document.getElementById('genreInput')
+    const deleteBtn = document.getElementById('deleteBtn')
+    const cancelBtn = document.getElementById('cancelBtn')
 
-const addBtn = document.getElementById('addBtn')
-const dataBody = document.getElementById('dataBody')
-const crudForm = document.getElementById('crudForm')
-const recordIdInput = document.getElementById('recordId')
-const judulInput = document.getElementById('judulInput')
-const pengarangInput = document.getElementById('pengarangInput')
-const penerbitInput = document.getElementById('penerbitInput')
-const tanggalInput = document.getElementById('tanggalInput')
-const genreInput = document.getElementById('genreInput')
-const deleteBtn = document.getElementById('deleteBtn')
-const cancelBtn = document.getElementById('cancelBtn')
+    async function loadData() {
+      const { data, error } = await supabase.from('buku').select('*').order('id')
+      if (error) return alert('Error loading data: ' + error.message)
 
-async function loadData() {
-  const { data, error } = await supabase.from('buku').select('*').order('id')
-  if (error) return alert('Error loading data: ' + error.message)
+      dataBody.innerHTML = ''
+      data.forEach(row => {
+        const tr = document.createElement('tr')
+        tr.dataset.id = row.id
+        tr.innerHTML = `
+          <td>${row.id}</td>
+          <td>${row.judul}</td>
+          <td>${row.pengarang}</td>
+          <td>${row.penerbit}</td>
+          <td>${row.tanggal_terbit}</td>
+          <td>${row.genre || '-'}</td>
+          <td><img src="${row.cover_url || 'placeholder.jpg'}" class="cover-preview"></td>
+        `
+        tr.addEventListener('click', () => showForm(row))
+        dataBody.appendChild(tr)
+      })
+    }
 
-  dataBody.innerHTML = ''
-  data.forEach(row => {
-    const tr = document.createElement('tr')
-    tr.dataset.id = row.id
-    tr.innerHTML = `
-      <td>${row.id}</td>
-      <td>${row.judul}</td>
-      <td>${row.pengarang}</td>
-      <td>${row.penerbit}</td>
-      <td>${row.tanggal_terbit}</td>
-      <td>${row.genre || '-'}</td>
-      <td><img src="${row.cover_url || 'placeholder.jpg'}" style="height:50px;"></td>
-    `
-    tr.addEventListener('click', () => showForm(row))
-    dataBody.appendChild(tr)
-  })
-}
-
-function showForm(data = null) {
-  if (data) {
-    recordIdInput.value = data.id
-    judulInput.value = data.judul
-    pengarangInput.value = data.pengarang
-    penerbitInput.value = data.penerbit
-    tanggalInput.value = data.tanggal_terbit
-    genreInput.value = data.genre || ''
-    deleteBtn.style.display = 'inline-block'
-  } else {
-    recordIdInput.value = ''
-    crudForm.reset()
-    deleteBtn.style.display = 'none'
-  }
-  crudForm.style.display = 'block'
-  judulInput.focus()
-}
-
-function hideForm() {
-  crudForm.style.display = 'none'
-  recordIdInput.value = ''
-  crudForm.reset()
-}
-
-async function saveData(e) {
-  e.preventDefault()
-  const id = recordIdInput.value
-  const judul = judulInput.value.trim()
-  const pengarang = pengarangInput.value.trim()
-  const penerbit = penerbitInput.value.trim()
-  const tanggal_terbit = tanggalInput.value
-  const genre = genreInput.value.trim()
-  const coverFile = document.getElementById('coverInput').files[0];
-  let cover_url = ''; // default kosong
-
-  if (!judul || !pengarang || !penerbit || !tanggal_terbit || !genre) {
-    return alert('Semua kolom harus diisi!')
-  }
-
-  // Upload gambar jika ada
-  if (coverFile) {
-    const fileName = `${Date.now()}-${coverFile.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('cover-buku') // pastikan bucket ini sudah ada
-      .upload(`cover/${fileName}`, coverFile, {
-        cacheControl: '3600',
-        upsert: false
-      });
-
-    if (uploadError) return alert('Gagal upload cover: ' + uploadError.message);
-
-    cover_url = `https://whhnuismtwqbmplvwzwf.supabase.co/storage/v1/object/public/cover-buku/cover/${fileName}`;
-  }
-
-  const dataToSave = { judul, pengarang, penerbit, tanggal_terbit, genre }
-  if (cover_url) dataToSave.cover_url = cover_url
-
-  if (id) {
-    const { error } = await supabase
-      .from('buku')
-      .update(dataToSave)
-      .eq('id', id)
-    if (error) return alert('Error update: ' + error.message)
-  } else {
-    const { error } = await supabase
-      .from('buku')
-      .insert([dataToSave])
-    if (error) return alert('Error insert: ' + error.message)
-  }
-
-  hideForm()
-  loadData()
-}
-    const dataToSave = { judul, pengarang, penerbit, tanggal_terbit, genre }
-    if (cover_url) dataToSave.cover_url = cover_url
-
-    if (id) {
-      const { error } = await supabase
-        .from('buku')
-        .update(dataToSave)
-        .eq('id', id)
-      if (error) return alert('Error update: ' + error.message)
-    } else {
-      const { error } = await supabase
-        .from('buku')
-        .insert([dataToSave])
-      if (error) return alert('Error insert: ' + error.message)
+    function showForm(data = null) {
+      if (data) {
+        recordIdInput.value = data.id
+        judulInput.value = data.judul
+        pengarangInput.value = data.pengarang
+        penerbitInput.value = data.penerbit
+        tanggalInput.value = data.tanggal_terbit
+        genreInput.value = data.genre || ''
+        deleteBtn.style.display = 'inline-block'
+      } else {
+        recordIdInput.value = ''
+        crudForm.reset()
+        deleteBtn.style.display = 'none'
       }
+      crudForm.style.display = 'block'
+      judulInput.focus()
+    }
+
+    function hideForm() {
+      crudForm.style.display = 'none'
+      recordIdInput.value = ''
+      crudForm.reset()
+    }
+
+    async function saveData(e) {
+      e.preventDefault()
+      const id = recordIdInput.value
+      const judul = judulInput.value.trim()
+      const pengarang = pengarangInput.value.trim()
+      const penerbit = penerbitInput.value.trim()
+      const tanggal_terbit = tanggalInput.value
+      const genre = genreInput.value.trim()
+      const coverFile = document.getElementById('coverInput').files[0]
+      let cover_url = ''
+
+      if (!judul || !pengarang || !penerbit || !tanggal_terbit || !genre) {
+        return alert('Semua kolom harus diisi!')
+      }
+
+      if (coverFile) {
+        const fileName = `${Date.now()}-${coverFile.name}`
+        const { error: uploadError } = await supabase.storage
+          .from('cover-buku')
+          .upload(`cover/${fileName}`, coverFile, {
+            cacheControl: '3600',
+            upsert: false
+          })
+
+        if (uploadError) return alert('Gagal upload cover: ' + uploadError.message)
+
+        cover_url = `https://whhnuismtwqbmplvwzwf.supabase.co/storage/v1/object/public/cover-buku/cover/${fileName}`
+      }
+
+      const dataToSave = { judul, pengarang, penerbit, tanggal_terbit, genre }
+      if (cover_url) dataToSave.cover_url = cover_url
+
+      if (id) {
+        const { error } = await supabase.from('buku').update(dataToSave).eq('id', id)
+        if (error) return alert('Error update: ' + error.message)
+      } else {
+        const { error } = await supabase.from('buku').insert([dataToSave])
+        if (error) return alert('Error insert: ' + error.message)
+      }
+
       hideForm()
       loadData()
-}
+    }
 
-async function deleteData() {
-  const id = recordIdInput.value
-  if (!id) return
-  if (!confirm('Yakin ingin menghapus buku ini?')) return
+    async function deleteData() {
+      const id = recordIdInput.value
+      if (!id || !confirm('Yakin ingin menghapus buku ini?')) return
 
-  const { error } = await supabase.from('buku').delete().eq('id', id)
-  if (error) return alert('Error hapus: ' + error.message)
+      const { error } = await supabase.from('buku').delete().eq('id', id)
+      if (error) return alert('Error hapus: ' + error.message)
 
-  hideForm()
-  loadData()
-}
+      hideForm()
+      loadData()
+    }
 
-addBtn.addEventListener('click', () => showForm(null))
-crudForm.addEventListener('submit', saveData)
-deleteBtn.addEventListener('click', deleteData)
-cancelBtn.addEventListener('click', hideForm)
-window.addEventListener('DOMContentLoaded', loadData)
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  await supabase.auth.signOut()
-  localStorage.removeItem('sessionUser') // jika sebelumnya pakai localStorage
-  window.location.href = 'login.html' // arahkan ke halaman login
-})
-
-</script>
+    addBtn.addEventListener('click', () => showForm(null))
+    crudForm.addEventListener('submit', saveData)
+    deleteBtn.addEventListener('click', deleteData)
+    cancelBtn.addEventListener('click', hideForm)
+    window.addEventListener('DOMContentLoaded', loadData)
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut()
+      localStorage.removeItem('sessionUser')
+      window.location.href = 'login.html'
+    })
+  </script>
 
 </body>
 </html>
