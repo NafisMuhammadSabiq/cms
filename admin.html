@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daftar Buku Perpustakaan</title>
+  <title>Admin Perpustakaan</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -14,6 +14,7 @@
 
     h2 {
       color: #00467f;
+      margin-top: 30px;
     }
 
     button {
@@ -96,7 +97,7 @@
 </head>
 <body>
 
-  <h2>CRUD Buku Perpustakaan (Supabase)</h2>
+  <h2>CRUD Buku Perpustakaan</h2>
   <button id="logoutBtn">Logout</button>
   <button id="addBtn">Tambah Buku</button>
   <button onclick="window.location.href='index.html'">Home</button>
@@ -137,16 +138,33 @@
     <button type="button" id="cancelBtn">Batal</button>
   </form>
 
+  <h2>Daftar Peminjaman</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Resi</th>
+        <th>Nama</th>
+        <th>Buku</th>
+        <th>Tanggal</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="peminjamanBody"></tbody>
+  </table>
+
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const SUPABASE_URL = 'https://whhnuismtwqbmplvwzwf.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndoaG51aXNtdHdxYm1wbHZ3endmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzc1ODQsImV4cCI6MjA2NTcxMzU4NH0.9aAnrF1Vicqui3zWSXcAck_prcganeCIJEtN-RKyDVc'
+    const supabase = createClient(
+      'https://whhnuismtwqbmplvwzwf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndoaG51aXNtdHdxYm1wbHZ3endmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzc1ODQsImV4cCI6MjA2NTcxMzU4NH0.9aAnrF1Vicqui3zWSXcAck_prcganeCIJEtN-RKyDVc'
+    )
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    const dataBody = document.getElementById('dataBody')
+    const peminjamanBody = document.getElementById('peminjamanBody')
 
     const addBtn = document.getElementById('addBtn')
-    const dataBody = document.getElementById('dataBody')
     const crudForm = document.getElementById('crudForm')
     const recordIdInput = document.getElementById('recordId')
     const judulInput = document.getElementById('judulInput')
@@ -171,7 +189,7 @@
           <td>${row.pengarang}</td>
           <td>${row.penerbit}</td>
           <td>${row.tanggal_terbit}</td>
-          <td>${row.genre || '-'}</td>
+          <td>${row.genre}</td>
         `
         tr.addEventListener('click', () => showForm(row))
         dataBody.appendChild(tr)
@@ -185,7 +203,7 @@
         pengarangInput.value = data.pengarang
         penerbitInput.value = data.penerbit
         tanggalInput.value = data.tanggal_terbit
-        genreInput.value = data.genre || ''
+        genreInput.value = data.genre
         deleteBtn.style.display = 'inline-block'
       } else {
         recordIdInput.value = ''
@@ -193,38 +211,32 @@
         deleteBtn.style.display = 'none'
       }
       crudForm.style.display = 'block'
-      judulInput.focus()
     }
 
     function hideForm() {
       crudForm.style.display = 'none'
-      recordIdInput.value = ''
       crudForm.reset()
     }
 
     async function saveData(e) {
       e.preventDefault()
       const id = recordIdInput.value
-      const judul = judulInput.value.trim()
-      const pengarang = pengarangInput.value.trim()
-      const penerbit = penerbitInput.value.trim()
-      const tanggal_terbit = tanggalInput.value
-      const genre = genreInput.value.trim()
-
-      if (!judul || !pengarang || !penerbit || !tanggal_terbit || !genre) {
-        return alert('Semua kolom harus diisi!')
+      const data = {
+        judul: judulInput.value.trim(),
+        pengarang: pengarangInput.value.trim(),
+        penerbit: penerbitInput.value.trim(),
+        tanggal_terbit: tanggalInput.value,
+        genre: genreInput.value.trim()
       }
 
-      const dataToSave = { judul, pengarang, penerbit, tanggal_terbit, genre }
-
+      let error
       if (id) {
-        const { error } = await supabase.from('buku').update(dataToSave).eq('id', id)
-        if (error) return alert('Error update: ' + error.message)
+        ({ error } = await supabase.from('buku').update(data).eq('id', id))
       } else {
-        const { error } = await supabase.from('buku').insert([dataToSave])
-        if (error) return alert('Error insert: ' + error.message)
+        ({ error } = await supabase.from('buku').insert([data]))
       }
 
+      if (error) return alert('Error: ' + error.message)
       hideForm()
       loadData()
     }
@@ -232,26 +244,58 @@
     async function deleteData() {
       const id = recordIdInput.value
       if (!id || !confirm('Yakin ingin menghapus buku ini?')) return
-
       const { error } = await supabase.from('buku').delete().eq('id', id)
-      if (error) return alert('Error hapus: ' + error.message)
-
+      if (error) return alert('Gagal hapus: ' + error.message)
       hideForm()
       loadData()
     }
 
-    addBtn.addEventListener('click', () => showForm(null))
-    crudForm.addEventListener('submit', saveData)
-    deleteBtn.addEventListener('click', deleteData)
-    cancelBtn.addEventListener('click', hideForm)
-    window.addEventListener('DOMContentLoaded', loadData)
+    async function loadPeminjaman() {
+      const { data, error } = await supabase.from('peminjaman')
+        .select('*, buku(judul)')
+        .order('id', { ascending: false })
+
+      if (error) return alert('Gagal muat data peminjaman: ' + error.message)
+
+      peminjamanBody.innerHTML = ''
+      data.forEach(p => {
+        peminjamanBody.innerHTML += `
+          <tr>
+            <td>${p.no_resi}</td>
+            <td>${p.nama}</td>
+            <td>${p.buku?.judul || '-'}</td>
+            <td>${p.tanggal_pinjam}</td>
+            <td>${p.status}</td>
+            <td>
+              <button onclick="ubahStatus(${p.id}, 'Dipinjam')">Konfirmasi</button>
+              <button onclick="ubahStatus(${p.id}, 'Dikembalikan')">Kembali</button>
+            </td>
+          </tr>
+        `
+      })
+    }
+
+    window.ubahStatus = async (id, status) => {
+      const { error } = await supabase.from('peminjaman').update({ status }).eq('id', id)
+      if (error) return alert('Gagal ubah status: ' + error.message)
+      loadPeminjaman()
+    }
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut()
       localStorage.removeItem('sessionUser')
       window.location.href = 'login.html'
     })
-  </script>
 
+    addBtn.addEventListener('click', () => showForm(null))
+    crudForm.addEventListener('submit', saveData)
+    deleteBtn.addEventListener('click', deleteData)
+    cancelBtn.addEventListener('click', hideForm)
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData()
+      loadPeminjaman()
+    })
+  </script>
 </body>
 </html>
