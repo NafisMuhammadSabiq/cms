@@ -278,7 +278,7 @@
     window.ubahStatus = async (id, status) => {
       const { data, error } = await supabase
         .from('peminjaman')
-        .select('id, buku_id')
+        .select('id, id_buku')
         .eq('id', id)
         .single()
 
@@ -292,7 +292,7 @@
       const updateBuku = await supabase
         .from('buku')
         .update({ status: status === 'Dikembalikan' ? 'tersedia' : 'dipinjam' })
-        .eq('id', data.buku_id)
+        .eq('id', data.id_buku)
 
       if (updateBuku.error) return alert('Gagal ubah status buku: ' + updateBuku.error.message)
 
