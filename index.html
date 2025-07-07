@@ -196,6 +196,7 @@
       }
 
       result.forEach(row => {
+        const tersedia = row.status !== 'dipinjam'
         content.innerHTML += `
           <div class="content-card">
             <h2>${row.judul}</h2>
@@ -203,10 +204,14 @@
             <p><strong>Penerbit:</strong> ${row.penerbit}</p>
             <p><strong>Tanggal:</strong> ${row.tanggal_terbit || '-'}</p>
             <p><strong>Genre:</strong> ${row.genre || '-'}</p>
-            <button onclick="pinjamBuku(${row.id})">Pinjam</button>
+            <p><strong>Status:</strong> ${row.status === 'dipinjam' ? 'Belum Tersedia' : 'Tersedia'}</p>
+            <button onclick="pinjamBuku(${row.id})" ${tersedia ? '' : 'disabled style="opacity: 0.5; cursor: not-allowed;"'}>
+              ${tersedia ? 'Pinjam' : 'Tidak Tersedia'}
+            </button>
           </div>
         `
       })
+
     }
 
   // Pastikan fungsi ini tetap bisa dipanggil dari tombol "Cari"
