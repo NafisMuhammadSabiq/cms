@@ -202,11 +202,16 @@
             <p><strong>Penerbit:</strong> ${row.penerbit}</p>
             <p><strong>Tanggal:</strong> ${row.tanggal_terbit || '-'}</p>
             <p><strong>Genre:</strong> ${row.genre || '-'}</p>
+            <button onclick="pinjamBuku(${row.id})">Pinjam</button>
           </div>
         `
       })
     }
 
+    function pinjamBuku(id) {
+      localStorage.setItem('id_buku_dipinjam', id)
+      window.location.href = 'pinjam.html'
+    }
     window.addEventListener('DOMContentLoaded', loadData)
     window.loadData = loadData;
   </script>
