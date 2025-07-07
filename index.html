@@ -160,11 +160,12 @@
     <div id="content"></div>
   </div>
 
+  <!-- Tetap gunakan script type="module" untuk Supabase -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     const SUPABASE_URL = 'https://whhnuismtwqbmplvwzwf.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndoaG51aXNtdHdxYm1wbHZ3endmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMzc1ODQsImV4cCI6MjA2NTcxMzU4NH0.9aAnrF1Vicqui3zWSXcAck_prcganeCIJEtN-RKyDVc'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJI...'
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     const content = document.getElementById('content')
@@ -208,13 +209,19 @@
       })
     }
 
+  // Pastikan fungsi ini tetap bisa dipanggil dari tombol "Cari"
+    window.loadData = loadData
+    window.addEventListener('DOMContentLoaded', loadData)
+  </script>
+
+<!-- Pindahkan fungsi ini ke luar type="module" -->
+  <script>
     function pinjamBuku(id) {
       localStorage.setItem('id_buku_dipinjam', id)
       window.location.href = 'pinjam.html'
     }
-    window.addEventListener('DOMContentLoaded', loadData)
-    window.loadData = loadData;
   </script>
+
 
 </body>
 </html>
