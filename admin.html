@@ -276,10 +276,29 @@
     }
 
     window.ubahStatus = async (id, status) => {
-      const { error } = await supabase.from('peminjaman').update({ status }).eq('id', id)
-      if (error) return alert('Gagal ubah status: ' + error.message)
+      const { data, error } = await supabase
+        .from('peminjaman')
+        .select('id, buku_id')
+        .eq('id', id)
+        .single()
+
+      if (error) return alert('Gagal ambil data peminjaman: ' + error.message)
+
+  // Update status peminjaman
+      const updatePinjam = await supabase.from('peminjaman').update({ status }).eq('id', id)
+      if (updatePinjam.error) return alert('Gagal ubah status peminjaman: ' + updatePinjam.error.message)
+
+  // Update status buku
+      const updateBuku = await supabase
+        .from('buku')
+        .update({ status: status === 'Dikembalikan' ? 'tersedia' : 'dipinjam' })
+        .eq('id', data.buku_id)
+
+      if (updateBuku.error) return alert('Gagal ubah status buku: ' + updateBuku.error.message)
+
       loadPeminjaman()
     }
+
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut()
