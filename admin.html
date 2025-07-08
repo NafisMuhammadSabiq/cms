@@ -269,6 +269,7 @@
             <td>
               <button onclick="ubahStatus(${p.id}, 'Dipinjam')">Konfirmasi</button>
               <button onclick="ubahStatus(${p.id}, 'Dikembalikan')">Kembali</button>
+              <button onclick="hapusPeminjaman(${p.id})" style="background-color:crimson;margin-top:5px;">Hapus</button>
             </td>
           </tr>
         `
@@ -283,6 +284,19 @@
         .single()
 
       if (error) return alert('Gagal ambil data peminjaman: ' + error.message)
+      
+    window.hapusPeminjaman = async (id) => {
+      if (!confirm('Yakin ingin menghapus data peminjaman ini?')) return
+
+      const { error } = await supabase.from('peminjaman').delete().eq('id', id)
+      if (error) {
+        alert('Gagal menghapus data peminjam: ' + error.message)
+        return
+      }
+
+      loadPeminjaman()
+    }
+
 
   // Update status peminjaman
       const updatePinjam = await supabase.from('peminjaman').update({ status }).eq('id', id)
