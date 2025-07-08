@@ -285,19 +285,6 @@
 
       if (error) return alert('Gagal ambil data peminjaman: ' + error.message)
       
-    window.hapusPeminjaman = async (id) => {
-      if (!confirm('Yakin ingin menghapus data peminjaman ini?')) return
-
-      const { error } = await supabase.from('peminjaman').delete().eq('id', id)
-      if (error) {
-        alert('Gagal menghapus data peminjam: ' + error.message)
-        return
-      }
-
-      loadPeminjaman()
-    }
-
-
   // Update status peminjaman
       const updatePinjam = await supabase.from('peminjaman').update({ status }).eq('id', id)
       if (updatePinjam.error) return alert('Gagal ubah status peminjaman: ' + updatePinjam.error.message)
@@ -312,8 +299,17 @@
 
       loadPeminjaman()
     }
+    window.hapusPeminjaman = async (id) => {
+      if (!confirm('Yakin ingin menghapus data peminjaman ini?')) return
 
+      const { error } = await supabase.from('peminjaman').delete().eq('id', id)
+      if (error) {
+        alert('Gagal menghapus data peminjam: ' + error.message)
+        return
+      }
 
+      loadPeminjaman()
+    }
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut()
       localStorage.removeItem('sessionUser')
