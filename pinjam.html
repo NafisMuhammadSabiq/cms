@@ -23,6 +23,7 @@
     <input type="text" id="prodi" placeholder="Program Studi" required />
     <input type="text" id="kelas" placeholder="Kelas" required />
     <input type="date" id="tanggal_pinjam" required />
+    <input type="date" id="tanggal_pengembalian" required />
 
     <button type="submit">Pinjam Sekarang</button>
     <button type="button" onclick="window.location.href='index.html'" style="margin-top: 10px;">Kembali</button>
@@ -55,6 +56,7 @@
       const prodi = document.getElementById('prodi').value.trim()
       const kelas = document.getElementById('kelas').value.trim()
       const tanggal = document.getElementById('tanggal_pinjam').value
+      const tanggalPengembalian = document.getElementById('tanggal_pengembalian').value
 
       const noResi = 'RESI-' + Math.floor(Math.random() * 1000000)
 
@@ -65,6 +67,7 @@
         prodi,
         kelas,
         tanggal_pinjam: tanggal,
+        tanggal_pengembalian: tanggalPengembalian,
         status: 'Menunggu',
         no_resi: noResi
       }])
@@ -80,6 +83,7 @@
         Nama: ${nama}<br/>
         NIM: ${nim}<br/>
         Resi: <strong>${noResi}</strong><br/>
+        Tanggal Pengembalian: ${tanggalPengembalian}<br/>
         Tunjukkan resi ini ke petugas perpustakaan.
       `
     })
