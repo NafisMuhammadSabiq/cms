@@ -145,7 +145,8 @@
         <th>Resi</th>
         <th>Nama</th>
         <th>Buku</th>
-        <th>Tanggal</th>
+        <th>Tanggal Pinjam</th>
+        <th>Tanggal kembali</th>
         <th>Status</th>
         <th>Aksi</th>
       </tr>
@@ -265,6 +266,7 @@
             <td>${p.nama}</td>
             <td>${p.buku?.judul || '-'}</td>
             <td>${p.tanggal_pinjam}</td>
+            <td>${p.tanggal_pengembalian || '-'}</td>
             <td>${p.status}</td>
             <td>
               <button onclick="ubahStatus(${p.id}, 'Dipinjam')">Konfirmasi</button>
@@ -286,7 +288,10 @@
       if (error) return alert('Gagal ambil data peminjaman: ' + error.message)
       
   // Update status peminjaman
-      const updatePinjam = await supabase.from('peminjaman').update({ status }).eq('id', id)
+      const updatePinjam = await supabase.from('peminjaman').update({
+        status,
+        tanggal_pengembalian: status === 'Dikembalikan' ? new Date().toISOString().split('T')[0] : null
+      }).eq('id', id)
       if (updatePinjam.error) return alert('Gagal ubah status peminjaman: ' + updatePinjam.error.message)
 
   // Update status buku
